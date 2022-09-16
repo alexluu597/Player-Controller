@@ -1,0 +1,74 @@
+//This script controls the front loader's movement and rotation, its rotation on the arms, and the rotation of the bucket.
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class FrontLoaderController : MonoBehaviour
+{
+    //variables
+    public Vector3 com;
+    public GameObject arms, bucket;
+
+    float movementSpeed, rotationSpeed, armRotationSpeed, bucketRotationSpeed;
+    float hInput, vInput, aInput, bInput;
+
+    Vector3 armsAngles, bucketAngles;
+
+    Rigidbody rbody;
+
+    //declarations
+    void Start()
+    {
+        movementSpeed = 10.0f;
+        rotationSpeed = 100.0f;
+        armRotationSpeed = 100.0f;
+        bucketRotationSpeed = 100.0f;
+        rbody = GetComponent<Rigidbody>();
+        rbody.centerOfMass = com;
+    }
+
+    void Update()
+    {
+        //quit program
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
+        //inputs
+        hInput = Input.GetAxis("Horizontal");
+        vInput = Input.GetAxis("Vertical");
+        aInput = Input.GetAxis("Arms");
+        bInput = Input.GetAxis("Bucket");
+
+        //movement
+        transform.Translate(Vector3.forward * vInput * movementSpeed * Time.deltaTime);
+        transform.Rotate(Vector3.up, hInput * rotationSpeed * Time.deltaTime);
+        arms.transform.Rotate(Vector3.right, aInput * armRotationSpeed * Time.deltaTime);
+        bucket.transform.Rotate(Vector3.right, bInput * bucketRotationSpeed * Time.deltaTime);
+
+
+        //clamp
+        armsAngles = arms.transform.localRotation.eulerAngles;
+
+        if (armsAngles.x > 25 && armsAngles.x < 90)
+        {
+            arms.transform.localRotation = Quaternion.Euler(25.0f, 0, 0);
+        }
+        if(armsAngles.x < 300 && armsAngles.x > 270)
+        {
+            arms.transform.localRotation = Quaternion.Euler(-60.0f, 0, 0);
+        }
+
+        bucketAngles = bucket.transform.localRotation.eulerAngles;
+
+        if(bucketAngles.x > 70 && bucketAngles.x < 90)
+        {
+            bucket.transform.localRotation = Quaternion.Euler(70.0f, 0, 0);
+        }
+        if(bucketAngles.x < 320 && bucketAngles.x > 270)
+        {
+            bucket.transform.localRotation = Quaternion.Euler(-40.0f, 0, 0);
+        }
+    }
+}
