@@ -1,0 +1,54 @@
+//This script controls the hover tank
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class HoverTankController : MonoBehaviour
+{
+    //variables
+    Rigidbody rbody;
+    float distance;
+    float antigravForce;
+    RaycastHit hit;
+
+    float hInput, vInput;
+    float movementSpeed, rotationSpeed;
+
+    //declaration
+    void Start()
+    {
+        rbody = GetComponent<Rigidbody>();
+        distance = 2.0f;
+        movementSpeed = 10.0f;
+        rotationSpeed = 100;
+    }
+
+    void FixedUpdate()
+    {
+        //quit program
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
+        //controls the hover
+        antigravForce = rbody.mass;
+
+        if(Physics.Raycast(transform.position, Vector3.down, out hit, distance))
+        {
+            rbody.AddForce(transform.up * (distance - hit.distance) / distance * antigravForce, ForceMode.Impulse);
+        }
+
+    }
+
+    private void Update()
+    {
+        //inputs
+        hInput = Input.GetAxis("Horizontal");
+        vInput = Input.GetAxis("Vertical");
+
+        //movement
+        rbody.AddRelativeForce(0, 0, vInput * movementSpeed * Time.deltaTime, ForceMode.Impulse);
+        transform.Rotate(Vector3.up, hInput * rotationSpeed * Time.deltaTime);
+    }
+}
