@@ -70,5 +70,5 @@ public class FrontLoaderController : MonoBehaviour
         {
             bucket.transform.localRotation = Quaternion.Euler(-40.0f, 0, 0);
         }
-    }
+    } 
 }
