@@ -14,6 +14,11 @@ public class HoverTankController : MonoBehaviour
     float hInput, vInput;
     float movementSpeed, rotationSpeed;
 
+    BoxCollider frontCollider, backCollider;
+
+    [SerializeField]
+    bool onFlatGround;
+
     //declaration
     void Start()
     {
@@ -21,6 +26,8 @@ public class HoverTankController : MonoBehaviour
         distance = 2.0f;
         movementSpeed = 10.0f;
         rotationSpeed = 100;
+        frontCollider = GetComponents<BoxCollider>()[0];
+        backCollider = GetComponents<BoxCollider>()[1];
     }
 
     void FixedUpdate()
@@ -34,11 +41,10 @@ public class HoverTankController : MonoBehaviour
         //controls the hover
         antigravForce = rbody.mass;
 
-        if(Physics.Raycast(transform.position, Vector3.down, out hit, distance))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, distance))
         {
             rbody.AddForce(transform.up * (distance - hit.distance) / distance * antigravForce, ForceMode.Impulse);
         }
-
     }
 
     private void Update()
@@ -50,5 +56,41 @@ public class HoverTankController : MonoBehaviour
         //movement
         rbody.AddRelativeForce(0, 0, vInput * movementSpeed * Time.deltaTime, ForceMode.Impulse);
         transform.Rotate(Vector3.up, hInput * rotationSpeed * Time.deltaTime);
+
+        //controls the rotation
+        if(hInput == 0 && vInput == 0)
+        {
+            transform.localRotation = Quaternion.Euler(0, transform.localRotation.eulerAngles.y, 0);
+        }
+
+        if(transform.localRotation.x > 0)
+        {
+            transform.Rotate(Vector3.right, Time.deltaTime * -5, Space.Self);
+        }
+        if (transform.localRotation.x < 0)
+        {
+            transform.Rotate(Vector3.right, Time.deltaTime * 5, Space.Self);
+        }
+        if (transform.localRotation.z > 0)
+        {
+            transform.Rotate(Vector3.forward, Time.deltaTime * -5, Space.Self);
+        }
+        if (transform.localRotation.z < 0)
+        {
+            transform.Rotate(Vector3.forward, Time.deltaTime * 5, Space.Self);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.transform.localRotation.x == 0 || other.transform.localRotation.y == 0 || other.transform.localRotation.z == 0)
+        {
+            
+        }
     }
 }
