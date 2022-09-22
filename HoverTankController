@@ -14,9 +14,6 @@ public class HoverTankController : MonoBehaviour
     float hInput, vInput;
     float movementSpeed, rotationSpeed;
 
-    BoxCollider frontCollider, backCollider;
-
-    [SerializeField]
     bool onFlatGround;
 
     //declaration
@@ -26,8 +23,7 @@ public class HoverTankController : MonoBehaviour
         distance = 2.0f;
         movementSpeed = 10.0f;
         rotationSpeed = 100;
-        frontCollider = GetComponents<BoxCollider>()[0];
-        backCollider = GetComponents<BoxCollider>()[1];
+        onFlatGround = true;
     }
 
     void FixedUpdate()
@@ -58,39 +54,88 @@ public class HoverTankController : MonoBehaviour
         transform.Rotate(Vector3.up, hInput * rotationSpeed * Time.deltaTime);
 
         //controls the rotation
-        if(hInput == 0 && vInput == 0)
+        if (hInput == 0 && vInput == 0 && onFlatGround)
         {
             transform.localRotation = Quaternion.Euler(0, transform.localRotation.eulerAngles.y, 0);
         }
 
-        if(transform.localRotation.x > 0)
+        if(onFlatGround)
         {
-            transform.Rotate(Vector3.right, Time.deltaTime * -5, Space.Self);
-        }
-        if (transform.localRotation.x < 0)
-        {
-            transform.Rotate(Vector3.right, Time.deltaTime * 5, Space.Self);
-        }
-        if (transform.localRotation.z > 0)
-        {
-            transform.Rotate(Vector3.forward, Time.deltaTime * -5, Space.Self);
-        }
-        if (transform.localRotation.z < 0)
-        {
-            transform.Rotate(Vector3.forward, Time.deltaTime * 5, Space.Self);
+            if (transform.localRotation.x > 0)
+            {
+                transform.Rotate(Vector3.right, Time.deltaTime * -5, Space.Self);
+            }
+            if (transform.localRotation.x < 0)
+            {
+                transform.Rotate(Vector3.right, Time.deltaTime * 5, Space.Self);
+            }
+            if (transform.localRotation.z > 0)
+            {
+                transform.Rotate(Vector3.forward, Time.deltaTime * -5, Space.Self);
+            }
+            if (transform.localRotation.z < 0)
+            {
+                transform.Rotate(Vector3.forward, Time.deltaTime * 5, Space.Self);
+            }
         }
     }
 
+    //triggers to check if there is a ramp
     private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.GetType() == typeof(BoxCollider))
+        {
+            if (other.transform.localRotation.x != 0 || other.transform.localRotation.x != 0 || other.transform.localRotation.x != 0)
+            {
+                transform.Rotate(Vector3.right, Time.deltaTime * -5, Space.Self);
+                onFlatGround = false;
+            }
+            else if (other.transform.localRotation.x == 0 && other.transform.localRotation.x == 0 && other.transform.localRotation.x == 0)
+            {
+                onFlatGround = true;
+            }
+        }
+
+        else if (other.GetType() == typeof(CapsuleCollider))
+        {
+            if (other.transform.localRotation.x != 0 || other.transform.localRotation.x != 0 || other.transform.localRotation.x != 0)
+            {
+                transform.Rotate(Vector3.right, Time.deltaTime * 5, Space.Self);
+                onFlatGround = false;
+            }
+            else if (other.transform.localRotation.x == 0 && other.transform.localRotation.x == 0 && other.transform.localRotation.x == 0)
+            {
+                onFlatGround = true;
+            }
+        }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if (other.transform.localRotation.x == 0 || other.transform.localRotation.y == 0 || other.transform.localRotation.z == 0)
+        if (other.GetType() == typeof(BoxCollider))
         {
-            
+            if(other.transform.localRotation.x != 0 || other.transform.localRotation.x != 0 || other.transform.localRotation.x != 0)
+            {
+                transform.Rotate(Vector3.right, Time.deltaTime * -5, Space.Self);
+                onFlatGround = false;
+            }
+            else if(other.transform.localRotation.x == 0 && other.transform.localRotation.x == 0 && other.transform.localRotation.x == 0)
+            {
+                onFlatGround = true;
+            }
+        }
+
+        else if (other.GetType() == typeof(CapsuleCollider))
+        {
+            if (other.transform.localRotation.x != 0 || other.transform.localRotation.x != 0 || other.transform.localRotation.x != 0)
+            {
+                transform.Rotate(Vector3.right, Time.deltaTime * 5, Space.Self);
+                onFlatGround = false;
+            }
+            else if (other.transform.localRotation.x == 0 && other.transform.localRotation.x == 0 && other.transform.localRotation.x == 0)
+            {
+                onFlatGround = true;
+            }
         }
     }
 }
